@@ -1,0 +1,388 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>The Empire Blueprint: Operations Dashboard</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f8f7f4;
+            color: #1a1a1a;
+        }
+        .pillar-card {
+            background-color: #ffffff;
+            border: 1px solid #e5e7eb;
+            border-radius: 0.75rem;
+            padding: 1.5rem;
+            box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.05), 0 2px 4px -2px rgb(0 0 0 / 0.05);
+            transition: all 0.3s ease-in-out;
+        }
+        .chart-container {
+            position: relative;
+            width: 100%;
+            height: 300px;
+            max-height: 40vh;
+        }
+        .btn {
+            transition: all 0.2s ease;
+        }
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+        }
+        .input-field {
+            width: 100%;
+            padding: 0.5rem 0.75rem;
+            border-radius: 0.5rem;
+            border: 1px solid #d1d5db;
+            background-color: #f9fafb;
+            text-align: center;
+            font-weight: 500;
+        }
+        .checkbox-label {
+            display: flex;
+            align-items: center;
+            cursor: pointer;
+            padding: 0.5rem 1rem;
+            border: 1px solid #d1d5db;
+            border-radius: 0.5rem;
+            transition: all 0.2s ease;
+        }
+        .checkbox-label input:checked + span {
+            text-decoration: line-through;
+            color: #6b7280;
+        }
+        .checkbox-label:has(input:checked) {
+            background-color: #e5e7eb;
+            border-color: #9ca3af;
+        }
+    </style>
+</head>
+<body class="antialiased">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        
+        <header class="text-center mb-8">
+            <h1 class="text-4xl font-bold tracking-tight text-gray-900">The Empire Blueprint</h1>
+            <p class="mt-2 text-lg text-gray-600">Daily Operations Dashboard</p>
+        </header>
+
+        <main class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+            
+            <div class="lg:col-span-1 space-y-8">
+                <div class="pillar-card">
+                    <div class="flex items-center justify-between mb-4">
+                        <button id="prev-day" class="btn p-2 rounded-full bg-gray-200 hover:bg-gray-300">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M12.707 5.293a1 1 0 010 1.414L9.414 10l3.293 3.293a1 1 0 01-1.414 1.414l-4-4a1 1 0 010-1.414l4-4a1 1 0 011.414 0z" clip-rule="evenodd" /></svg>
+                        </button>
+                        <h2 id="current-date" class="text-xl font-bold text-center"></h2>
+                        <button id="next-day" class="btn p-2 rounded-full bg-gray-200 hover:bg-gray-300">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clip-rule="evenodd" /></svg>
+                        </button>
+                    </div>
+                    <button id="jump-today" class="w-full text-center text-sm text-blue-600 hover:underline mb-6">Jump to Today</button>
+
+                    <div class="space-y-6">
+                        <div>
+                            <h3 class="font-semibold text-lg mb-3">Pillar 1: The Founder (Health)</h3>
+                            <div class="space-y-3">
+                                <div class="flex items-center justify-between">
+                                    <label for="sleep-hours" class="font-medium">Sleep Hours</label>
+                                    <input type="number" id="sleep-hours" class="input-field w-24" step="0.5" min="0" max="16">
+                                </div>
+                                <div class="flex items-center justify-between">
+                                    <label class="font-medium">Workout</label>
+                                    <label class="checkbox-label"><input type="checkbox" id="workout-done" class="sr-only"><span>Complete</span></label>
+                                </div>
+                                <div class="flex items-center justify-between">
+                                    <label class="font-medium">Nutrition</label>
+                                    <div class="flex space-x-2">
+                                        <label class="checkbox-label text-sm"><input type="checkbox" class="meal-check sr-only"><span>M1</span></label>
+                                        <label class="checkbox-label text-sm"><input type="checkbox" class="meal-check sr-only"><span>M2</span></label>
+                                        <label class="checkbox-label text-sm"><input type="checkbox" class="meal-check sr-only"><span>M3</span></label>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div>
+                            <h3 class="font-semibold text-lg mb-3">Pillar 2: The Empire (Project)</h3>
+                            <div class="flex items-center justify-between">
+                                <label for="project-hours" class="font-medium">Total Project Hours</label>
+                                <input type="number" id="project-hours" class="input-field w-24" step="0.5" min="0" max="24">
+                            </div>
+                        </div>
+
+                        <div>
+                            <h3 class="font-semibold text-lg mb-3">Pillar 3: The Legacy (College Prep)</h3>
+                            <div class="flex items-center justify-between">
+                                <label for="study-hours" class="font-medium">Total Study Hours</label>
+                                <input type="number" id="study-hours" class="input-field w-24" step="0.5" min="0" max="24">
+                            </div>
+                        </div>
+                    </div>
+                    <button id="save-data" class="btn w-full mt-8 py-3 bg-blue-600 text-white font-semibold rounded-lg hover:bg-blue-700">Save Daily Log</button>
+                    <p id="save-confirm" class="text-center text-green-600 font-medium mt-2 h-5"></p>
+                </div>
+            </div>
+
+            <div class="lg:col-span-2 space-y-8">
+                <div class="pillar-card text-center">
+                     <h3 class="font-semibold text-lg mb-2">Commander's Intent</h3>
+                     <p id="quote" class="text-gray-700 italic">"The man who moves a mountain begins by carrying away small stones."</p>
+                </div>
+                <div class="pillar-card">
+                    <h3 class="font-semibold text-lg mb-4 text-center">Weekly Operations Review: Pillar Hours</h3>
+                    <div class="chart-container">
+                        <canvas id="pillar-chart"></canvas>
+                    </div>
+                </div>
+                <div class="pillar-card">
+                    <h3 class="font-semibold text-lg mb-4 text-center">Weekly Operations Review: Founder Health</h3>
+                    <div class="chart-container">
+                        <canvas id="health-chart"></canvas>
+                    </div>
+                </div>
+            </div>
+
+        </main>
+    </div>
+
+    <script>
+        const App = {
+            state: {
+                currentDate: new Date(),
+                allData: {},
+            },
+            charts: {
+                pillarChart: null,
+                healthChart: null,
+            },
+            elements: {
+                currentDateDisplay: document.getElementById('current-date'),
+                prevDayBtn: document.getElementById('prev-day'),
+                nextDayBtn: document.getElementById('next-day'),
+                jumpTodayBtn: document.getElementById('jump-today'),
+                sleepInput: document.getElementById('sleep-hours'),
+                workoutCheckbox: document.getElementById('workout-done'),
+                mealCheckboxes: document.querySelectorAll('.meal-check'),
+                projectInput: document.getElementById('project-hours'),
+                studyInput: document.getElementById('study-hours'),
+                saveBtn: document.getElementById('save-data'),
+                saveConfirm: document.getElementById('save-confirm'),
+                quoteDisplay: document.getElementById('quote'),
+                pillarChartCanvas: document.getElementById('pillar-chart'),
+                healthChartCanvas: document.getElementById('health-chart'),
+            },
+            quotes: [
+                "The disciplined mind is the strongest weapon.",
+                "Empires are not built in a day, but by laying brick after brick, every day.",
+                "Your future is created by what you do today, not tomorrow.",
+                "The pain of discipline is nothing like the pain of disappointment.",
+                "A warrior's greatest victory is the one over his own mind.",
+                "Do not pray for an easy life, pray for the strength to endure a difficult one.",
+                "The secret of your future is hidden in your daily routine."
+            ],
+
+            init() {
+                this.loadData();
+                this.setQuote();
+                this.addEventListeners();
+                this.render();
+            },
+
+            addEventListeners() {
+                this.elements.prevDayBtn.addEventListener('click', () => this.navigateDate(-1));
+                this.elements.nextDayBtn.addEventListener('click', () => this.navigateDate(1));
+                this.elements.jumpTodayBtn.addEventListener('click', () => this.jumpToToday());
+                this.elements.saveBtn.addEventListener('click', () => this.saveCurrentData());
+            },
+
+            getDateKey(date) {
+                return date.toISOString().split('T')[0];
+            },
+
+            loadData() {
+                const data = localStorage.getItem('empireBlueprintData');
+                this.state.allData = data ? JSON.parse(data) : {};
+            },
+
+            saveDataToStorage() {
+                localStorage.setItem('empireBlueprintData', JSON.stringify(this.state.allData));
+            },
+
+            navigateDate(offset) {
+                this.state.currentDate.setDate(this.state.currentDate.getDate() + offset);
+                this.render();
+            },
+            
+            jumpToToday() {
+                this.state.currentDate = new Date();
+                this.render();
+            },
+            
+            setQuote() {
+                const dayOfYear = Math.floor((new Date() - new Date(new Date().getFullYear(), 0, 0)) / (1000 * 60 * 60 * 24));
+                this.elements.quoteDisplay.textContent = `"${this.quotes[dayOfYear % this.quotes.length]}"`;
+            },
+
+            saveCurrentData() {
+                const dateKey = this.getDateKey(this.state.currentDate);
+                const meals = Array.from(this.elements.mealCheckboxes).filter(cb => cb.checked).length;
+                
+                const dayData = {
+                    sleep: parseFloat(this.elements.sleepInput.value) || 0,
+                    workout: this.elements.workoutCheckbox.checked,
+                    meals: meals,
+                    project: parseFloat(this.elements.projectInput.value) || 0,
+                    study: parseFloat(this.elements.studyInput.value) || 0,
+                };
+
+                this.state.allData[dateKey] = dayData;
+                this.saveDataToStorage();
+                
+                this.elements.saveConfirm.textContent = 'Log Saved!';
+                setTimeout(() => { this.elements.saveConfirm.textContent = ''; }, 2000);
+
+                this.renderCharts();
+            },
+
+            render() {
+                const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
+                this.elements.currentDateDisplay.textContent = this.state.currentDate.toLocaleDateString('en-US', options);
+
+                const dateKey = this.getDateKey(this.state.currentDate);
+                const dataForDay = this.state.allData[dateKey] || {};
+
+                this.elements.sleepInput.value = dataForDay.sleep || '';
+                this.elements.workoutCheckbox.checked = dataForDay.workout || false;
+                this.elements.mealCheckboxes.forEach((cb, index) => {
+                    cb.checked = (dataForDay.meals || 0) > index;
+                });
+                this.elements.projectInput.value = dataForDay.project || '';
+                this.elements.studyInput.value = dataForDay.study || '';
+                
+                const isToday = this.getDateKey(new Date()) === this.getDateKey(this.state.currentDate);
+                this.elements.nextDayBtn.disabled = isToday;
+                this.elements.nextDayBtn.style.opacity = isToday ? 0.5 : 1;
+                this.elements.nextDayBtn.style.cursor = isToday ? 'not-allowed' : 'pointer';
+
+                this.renderCharts();
+            },
+
+            getChartDataForPastWeek() {
+                const labels = [];
+                const projectData = [];
+                const studyData = [];
+                const sleepData = [];
+                const workoutData = [];
+
+                for (let i = 6; i >= 0; i--) {
+                    const date = new Date(this.state.currentDate);
+                    date.setDate(date.getDate() - i);
+                    const dateKey = this.getDateKey(date);
+                    const dayData = this.state.allData[dateKey] || {};
+
+                    labels.push(date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' }));
+                    projectData.push(dayData.project || 0);
+                    studyData.push(dayData.study || 0);
+                    sleepData.push(dayData.sleep || 0);
+                    workoutData.push(dayData.workout ? (dayData.sleep || 0) : null);
+                }
+                return { labels, projectData, studyData, sleepData, workoutData };
+            },
+
+            renderCharts() {
+                const { labels, projectData, studyData, sleepData, workoutData } = this.getChartDataForPastWeek();
+
+                if (this.charts.pillarChart) this.charts.pillarChart.destroy();
+                this.charts.pillarChart = new Chart(this.elements.pillarChartCanvas, {
+                    type: 'bar',
+                    data: {
+                        labels: labels,
+                        datasets: [
+                            {
+                                label: 'Project Hours',
+                                data: projectData,
+                                backgroundColor: 'rgba(59, 130, 246, 0.7)',
+                                borderColor: 'rgba(59, 130, 246, 1)',
+                                borderWidth: 1
+                            },
+                            {
+                                label: 'Study Hours',
+                                data: studyData,
+                                backgroundColor: 'rgba(16, 185, 129, 0.7)',
+                                borderColor: 'rgba(16, 185, 129, 1)',
+                                borderWidth: 1
+                            }
+                        ]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        scales: {
+                            x: { stacked: true, grid: { display: false } },
+                            y: { stacked: true, beginAtZero: true, title: { display: true, text: 'Hours' } }
+                        },
+                        plugins: {
+                            tooltip: { mode: 'index', intersect: false }
+                        }
+                    }
+                });
+
+                if (this.charts.healthChart) this.charts.healthChart.destroy();
+                this.charts.healthChart = new Chart(this.elements.healthChartCanvas, {
+                    type: 'line',
+                    data: {
+                        labels: labels,
+                        datasets: [
+                            {
+                                label: 'Sleep Hours',
+                                data: sleepData,
+                                borderColor: 'rgba(147, 51, 234, 1)',
+                                backgroundColor: 'rgba(147, 51, 234, 0.1)',
+                                fill: true,
+                                tension: 0.3
+                            },
+                            {
+                                label: 'Workout Completed',
+                                data: workoutData,
+                                type: 'bubble',
+                                backgroundColor: 'rgba(234, 179, 8, 1)',
+                                radius: 8,
+                                hoverRadius: 10
+                            }
+                        ]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        scales: {
+                            y: { beginAtZero: true, title: { display: true, text: 'Hours' } }
+                        },
+                        plugins: {
+                            tooltip: {
+                                callbacks: {
+                                    label: function(context) {
+                                        if (context.dataset.label === 'Workout Completed') {
+                                            return 'Workout Completed';
+                                        }
+                                        return `Sleep: ${context.raw} hours`;
+                                    }
+                                }
+                            }
+                        }
+                    }
+                });
+            }
+        };
+
+        document.addEventListener('DOMContentLoaded', () => App.init());
+    </script>
+</body>
+</html>
